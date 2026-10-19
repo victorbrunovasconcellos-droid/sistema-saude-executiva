@@ -1,13 +1,3 @@
-Vamos adicionar todas as 3 grandes melhorias (Relatório Executivo em PDF, Filtros Avançados por Convênio/Risco e Personalização com Logótipo/Marca) diretamente ao seu Painel Estratégico de Gestão Hospitalar (PEGH)!
-
-Para além disso, incluí a biblioteca reportlab (necessária para compilar relatórios PDF elegantes em Python) e deixei o gerador de PDF totalmente configurado para emitir o documento formal assinado por si.
-
-📋 Código Completo do app.py (Versão Master & Executiva)
-Copie todo o bloco de código abaixo e substitua no seu ficheiro app.py no GitHub:
-
-Python
-
-
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -187,16 +177,13 @@ def gerar_relatorio_pdf(total_atendimentos, media_permanencia, taxa_ocupacao, ca
 
     story = []
     
-    # Cabeçalho
     story.append(Paragraph("PAINEL ESTRATÉGICO DE GESTÃO HOSPITALAR (PEGH)", title_style))
     story.append(Paragraph("Relatório Sintético de Inteligência Assistencial e Governança de Dados", subtitle_style))
     story.append(Spacer(1, 10))
 
-    # Filtros Aplicados
     story.append(Paragraph(f"<b>Filtros Selecionados:</b> Setor: <i>{setor_filtro}</i> | Convênio: <i>{convenio_filtro}</i>", body_style))
     story.append(Spacer(1, 15))
 
-    # Tabela de KPIs
     data_kpi = [
         ["Indicador Chave", "Valor Apurado", "Status / Tendência"],
         ["Atendimentos Totais", f"{total_atendimentos:,}", "Dentro do parâmetro de demanda"],
@@ -220,7 +207,6 @@ def gerar_relatorio_pdf(total_atendimentos, media_permanencia, taxa_ocupacao, ca
     story.append(t_kpi)
     story.append(Spacer(1, 20))
 
-    # Resumo Diagnóstico
     story.append(Paragraph("<b>Síntese Diagnóstica para a Diretoria:</b>", ParagraphStyle('SubHeader', parent=styles['Heading2'], fontSize=12, textColor=colors.HexColor('#0EA5E9'))))
     story.append(Spacer(1, 5))
     
@@ -233,7 +219,6 @@ def gerar_relatorio_pdf(total_atendimentos, media_permanencia, taxa_ocupacao, ca
     story.append(Paragraph(texto_resumo, body_style))
     story.append(Spacer(1, 30))
 
-    # Assinatura do Responsável
     story.append(Paragraph("____________________________________________________", body_style))
     story.append(Paragraph("<b>Bruno Vasconcelos</b>", body_style))
     story.append(Paragraph("Especialista em Gestão e Inteligência de Saúde | COREN-PE 830739-ENF", ParagraphStyle('SignStyle', parent=styles['Normal'], fontSize=8, textColor=colors.HexColor('#64748B'))))
@@ -322,7 +307,6 @@ def processar_arquivo(uploaded_file):
 # --- INÍCIO DA APLICAÇÃO ---
 if checar_autenticacao():
 
-    # Cabeçalho Principal com Marca Personalizável
     col_head1, col_head2 = st.columns([4, 1])
     with col_head1:
         st.title("🏥 PAINEL ESTRATÉGICO DE GESTÃO HOSPITALAR")
@@ -330,11 +314,9 @@ if checar_autenticacao():
     
     st.divider()
 
-    # Barra Lateral (Sidebar)
     with st.sidebar:
         st.header("⚙️ Painel de Controlo")
         
-        # Logotipo da Instituição (Marca Branca)
         logo_file = st.file_uploader("Upload Logótipo Hospitalar (Opcional)", type=["png", "jpg", "jpeg"])
         if logo_file:
             st.image(logo_file, use_container_width=True)
@@ -359,7 +341,6 @@ if checar_autenticacao():
 
         df_filtrado = df_base.copy() if df_base is not None else None
 
-        # Filtro 1: Setor
         setor_selecionado = "Todos"
         if df_filtrado is not None and "Setor" in df_filtrado.columns:
             setores_unicos = ["Todos"] + list(df_filtrado["Setor"].unique())
@@ -367,7 +348,6 @@ if checar_autenticacao():
             if setor_selecionado != "Todos":
                 df_filtrado = df_filtrado[df_filtrado["Setor"] == setor_selecionado]
 
-        # Filtro 2: Convênio
         convenio_selecionado = "Todos"
         if df_filtrado is not None and "Convenio" in df_filtrado.columns:
             convenios_unicos = ["Todos"] + list(df_filtrado["Convenio"].unique())
@@ -375,7 +355,6 @@ if checar_autenticacao():
             if convenio_selecionado != "Todos":
                 df_filtrado = df_filtrado[df_filtrado["Convenio"] == convenio_selecionado]
 
-        # Filtro 3: Status de Risco
         if df_filtrado is not None and "Status_Alerta" in df_filtrado.columns:
             riscos_unicos = ["Todos"] + list(df_filtrado["Status_Alerta"].unique())
             risco_selecionado = st.selectbox("Filtrar por Classificação de Risco", riscos_unicos)
@@ -394,7 +373,6 @@ if checar_autenticacao():
             st.session_state["autenticado"] = False
             st.rerun()
 
-    # MÉTODOS DE EXIBIÇÃO DE KPIS E GRÁFICOS
     if df_filtrado is not None and isinstance(df_filtrado, pd.DataFrame):
         
         total_atendimentos = len(df_filtrado)
@@ -453,7 +431,6 @@ if checar_autenticacao():
 
         st.divider()
 
-        # Resumo Executivo Inteligente + Botão de PDF
         col_res1, col_res2 = st.columns([3, 1])
         
         with col_res1:
@@ -536,7 +513,6 @@ if checar_autenticacao():
         st.subheader("📄 Relatório Extraído do PDF")
         st.text_area("Conteúdo do Documento:", dados_up, height=400)
 
-    # Rodapé Profissional
     st.markdown("""
         <div class="footer-container">
             <div class="footer-text">
