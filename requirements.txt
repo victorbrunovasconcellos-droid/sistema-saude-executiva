@@ -1,5 +1,7 @@
 streamlit
 pandas
-pdfplumber
+numpy
 plotly
+pdfplumber
 openpyxl
+reportlab
