@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import pdfplumber
-import io
+import re
 
 # 1. Configuração da Página
 st.set_page_config(
@@ -13,7 +13,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Estilização CSS personalizada para os KPI Cards
+# Estilização CSS para KPI Cards e Login
 st.markdown("""
     <style>
     .kpi-card {
@@ -44,7 +44,44 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 2. Leitura e Otimização de Arquivos com Cache
+# 2. Sistema de Autenticação (Fase 2)
+def checar_autenticacao():
+    if "autenticado" not in st.session_state:
+        st.session_state["autenticado"] = False
+
+    if not st.session_state["autenticado"]:
+        st.markdown("## 🔐 Acesso Restrito - Executive Health Intelligence")
+        st.caption("Por razões de segurança e LGPD, insira suas credenciais corporativas.")
+        
+        col1, col2 = st.columns([1, 2])
+        with col1:
+            usuario = st.text_input("Usuário")
+            senha = st.text_input("Senha", type="password")
+            btn_login = st.button("Entrar no Sistema", use_container_width=True)
+
+            if btn_login:
+                # Credenciais padrão para demonstração
+                if usuario == "admin" and senha == "saude2026":
+                    st.session_state["autenticado"] = True
+                    st.success("Acesso autorizado!")
+                    st.rerun()
+                else:
+                    st.error("Usuário ou senha incorretos.")
+        return False
+    return True
+
+# 3. Sanitização e Anonimização LGPD (Fase 2)
+def anonimizar_dados(df):
+    df_limpo = df.copy()
+    colunas_sensiveis = ['nome', 'paciente', 'cpf', 'prontuario', 'rg', 'documento', 'telefone']
+    
+    for col in df_limpo.columns:
+        if any(termo in col.lower() for termo in colunas_sensiveis):
+            df_limpo[col] = "[DADO ANONIMIZADO - LGPD]"
+            
+    return df_limpo
+
+# 4. Processamento Otimizado com Cache
 @st.cache_data(show_spinner=False)
 def processar_arquivo(uploaded_file):
     file_type = uploaded_file.name.split('.')[-1].lower()
@@ -65,128 +102,102 @@ def processar_arquivo(uploaded_file):
         return texto, "pdf"
     return None, None
 
-# 3. Cabeçalho Principal
-st.title("🏥 EXECUTIVE HEALTH INTELLIGENCE")
-st.caption("Plataforma Inteligente de Extração, KPIs Executivos e Análise de Dados de Saúde")
-st.divider()
+# Executar Verificação de Login
+if checar_autenticacao():
 
-# 4. Barra Lateral (Sidebar)
-with st.sidebar:
-    st.header("⚙️ Painel de Controle")
-    uploaded_file = st.file_uploader(
-        "Carregar Relatório Saúde (PDF, Excel ou CSV)", 
-        type=["xlsx", "xls", "csv", "pdf"]
-    )
-    
+    # Cabeçalho Principal
+    st.title("🏥 EXECUTIVE HEALTH INTELLIGENCE")
+    st.caption("Plataforma Inteligente de Extração, KPIs Executivos e Análise de Dados de Saúde")
     st.divider()
-    st.markdown("### 🔍 Filtros Executivos")
-    setor_filtro = st.selectbox("Setor Hospitalar", ["Todos os Setores", "UTI Adulto", "Emergência", "Internação", "Centro Cirúrgico"])
-    nivel_visiao = st.radio("Visão dos Dados", ["Visão Geral", "Análise Detalhada"])
-    
-    st.divider()
-    st.caption("Desenvolvido por Bruno Vasconcelos | Versão 2.0 (Fase 1)")
 
-# 5. Processamento e Exibição do Dashboard
-if uploaded_file is not None:
-    dados, tipo = processar_arquivo(uploaded_file)
-    
-    st.subheader("📌 Indicadores Chave de Desempenho (KPIs)")
-    
-    # Exibição dos KPI Cards em 4 colunas
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        st.markdown("""
-            <div class="kpi-card">
-                <div class="kpi-title">Atendimentos Totais</div>
-                <div class="kpi-value">1.482</div>
-                <div class="kpi-sub">↑ 5.2% vs mês anterior</div>
-            </div>
-        """, unsafe_allow_html=True)
+    # Barra Lateral
+    with st.sidebar:
+        st.header("⚙️ Painel de Controle")
+        uploaded_file = st.file_uploader(
+            "Carregar Relatório Saúde (PDF, Excel ou CSV)", 
+            type=["xlsx", "xls", "csv", "pdf"]
+        )
         
-    with col2:
-        st.markdown("""
-            <div class="kpi-card" style="border-left-color: #10B981;">
-                <div class="kpi-title">Média de Permanência</div>
-                <div class="kpi-value">3.4 dias</div>
-                <div class="kpi-sub">↓ 0.6 dias (Otimizado)</div>
-            </div>
-        """, unsafe_allow_html=True)
+        st.divider()
+        st.markdown("### 🛡️ Governança LGPD")
+        aplicar_lgpd = st.checkbox("Anonimizar dados sensíveis", value=True)
         
-    with col3:
-        st.markdown("""
-            <div class="kpi-card" style="border-left-color: #F59E0B;">
-                <div class="kpi-title">Taxa de Ocupação</div>
-                <div class="kpi-value">87.5%</div>
-                <div class="kpi-sub" style="color: #F59E0B;">→ Cap. Operacional Normal</div>
-            </div>
-        """, unsafe_allow_html=True)
+        st.divider()
+        if st.button("Sair / Logout"):
+            st.session_state["autenticado"] = False
+            st.rerun()
+
+    # Exibição do Dashboard
+    if uploaded_file is not None:
+        dados, tipo = processar_arquivo(uploaded_file)
         
-    with col4:
-        st.markdown("""
-            <div class="kpi-card" style="border-left-color: #EF4444;">
-                <div class="kpi-title">Acompanhamento Crítico</div>
-                <div class="kpi-value">14</div>
-                <div class="kpi-sub" style="color: #EF4444;">⚠ Pacientes em alerta</div>
-            </div>
-        """, unsafe_allow_html=True)
+        st.subheader("📌 Indicadores Chave de Desempenho (KPIs)")
+        col1, col2, col3, col4 = st.columns(4)
         
-    st.divider()
-    
-    # Visualização de Dados Conforme o Tipo de Arquivo
-    if tipo in ["excel", "csv"]:
-        st.subheader("📊 Visualização Interativa dos Dados")
-        
-        tab1, tab2 = st.tabs(["📉 Análise Gráfica", "📋 Tabela de Dados"])
-        
-        with tab1:
-            col_a, col_b = st.columns(2)
+        with col1:
+            st.markdown("""
+                <div class="kpi-card">
+                    <div class="kpi-title">Atendimentos Totais</div>
+                    <div class="kpi-value">1.482</div>
+                    <div class="kpi-sub">↑ 5.2% vs mês anterior</div>
+                </div>
+            """, unsafe_allow_html=True)
             
-            # Gráfico de Exemplo 1: Distribuição de Colunas
-            if len(dados.columns) >= 2:
-                col_x = dados.columns[0]
-                col_y = dados.columns[1] if dados[dados.columns[1]].dtype in ['int64', 'float64'] else dados.columns[0]
-                
-                with col_a:
-                    fig_bar = px.bar(
-                        dados.head(15), 
-                        x=col_x, 
-                        title=f"Distribuição por {col_x}",
-                        template="plotly_dark",
-                        color_discrete_sequence=['#0EA5E9']
-                    )
-                    st.plotly_chart(fig_bar, use_container_width=True)
-                    
-                with col_b:
-                    fig_pie = px.pie(
-                        dados.head(10), 
-                        names=col_x, 
-                        title=f"Proporção de {col_x}",
-                        template="plotly_dark",
-                        hole=0.4
-                    )
-                    st.plotly_chart(fig_pie, use_container_width=True)
+        with col2:
+            st.markdown("""
+                <div class="kpi-card" style="border-left-color: #10B981;">
+                    <div class="kpi-title">Média de Permanência</div>
+                    <div class="kpi-value">3.4 dias</div>
+                    <div class="kpi-sub">↓ 0.6 dias (Otimizado)</div>
+                </div>
+            """, unsafe_allow_html=True)
+            
+        with col3:
+            st.markdown("""
+                <div class="kpi-card" style="border-left-color: #F59E0B;">
+                    <div class="kpi-title">Taxa de Ocupação</div>
+                    <div class="kpi-value">87.5%</div>
+                    <div class="kpi-sub" style="color: #F59E0B;">→ Cap. Operacional Normal</div>
+                </div>
+            """, unsafe_allow_html=True)
+            
+        with col4:
+            st.markdown("""
+                <div class="kpi-card" style="border-left-color: #EF4444;">
+                    <div class="kpi-title">Acompanhamento Crítico</div>
+                    <div class="kpi-value">14</div>
+                    <div class="kpi-sub" style="color: #EF4444;">⚠ Pacientes em alerta</div>
+                </div>
+            """, unsafe_allow_html=True)
+            
+        st.divider()
+        
+        if tipo in ["excel", "csv"]:
+            if aplicar_lgpd:
+                dados_exibicao = anonimizar_dados(dados)
             else:
-                st.info("O arquivo contém poucas colunas para geração automática dos gráficos pré-configurados.")
-                
-        with tab2:
-            st.dataframe(dados, use_container_width=True)
-            
-    elif tipo == "pdf":
-        st.subheader("📄 Relatório Extraído do PDF")
-        st.text_area("Conteúdo do Documento:", dados, height=350)
+                dados_exibicao = dados.copy()
 
-else:
-    # Estado Inicial (Sem Arquivo Carregado)
-    st.info("👈 Por favor, faça o upload de um relatório de saúde na barra lateral para carregar o painel executivo.")
-    
-    st.subheader("📌 Exemplo de Estrutura do Painel Executivo")
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.markdown('<div class="kpi-card"><div class="kpi-title">Atendimentos</div><div class="kpi-value">--</div></div>', unsafe_allow_html=True)
-    with col2:
-        st.markdown('<div class="kpi-card"><div class="kpi-title">Permanência</div><div class="kpi-value">--</div></div>', unsafe_allow_html=True)
-    with col3:
-        st.markdown('<div class="kpi-card"><div class="kpi-title">Taxa Ocupação</div><div class="kpi-value">--</div></div>', unsafe_allow_html=True)
-    with col4:
-        st.markdown('<div class="kpi-card"><div class="kpi-title">Avisos</div><div class="kpi-value">--</div></div>', unsafe_allow_html=True)
+            st.subheader("📊 Visualização Interativa dos Dados")
+            tab1, tab2 = st.tabs(["📉 Análise Gráfica", "📋 Tabela de Dados Segura"])
+            
+            with tab1:
+                col_a, col_b = st.columns(2)
+                if len(dados.columns) >= 2:
+                    col_x = dados.columns[0]
+                    with col_a:
+                        fig_bar = px.bar(dados.head(15), x=col_x, title=f"Distribuição por {col_x}", template="plotly_dark")
+                        st.plotly_chart(fig_bar, use_container_width=True)
+                    with col_b:
+                        fig_pie = px.pie(dados.head(10), names=col_x, title=f"Proporção de {col_x}", template="plotly_dark", hole=0.4)
+                        st.plotly_chart(fig_pie, use_container_width=True)
+                        
+            with tab2:
+                st.dataframe(dados_exibicao, use_container_width=True)
+                
+        elif tipo == "pdf":
+            st.subheader("📄 Relatório Extraído do PDF")
+            st.text_area("Conteúdo do Documento:", dados, height=350)
+
+    else:
+        st.info("👈 Por favor, faça o upload de um relatório de saúde na barra lateral para carregar o painel executivo.")
