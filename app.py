@@ -1,3 +1,26 @@
+Para transformar a tela de login em algo memorável e verdadeiramente impressionante, podemos criar uma experiência visual imersiva e moderna.
+
+Aqui estão 3 conceitos de fundo estilizados que podemos aplicar via CSS no app.py:
+
+🎨 Opções de Fundo para a Tela de Login
+Dark Tech Gradient + Mesh Animation (Recomendado):
+
+Um fundo em tom azul-noturno profundo (#020617 / #0F172A) com luzes radiais azul-ciano e roxa neon no fundo, criando um efeito de ambiente de alta tecnologia (cyberpunk / executive health).
+
+Gradients Fluídos em Movimento (Glassmorphism Neon):
+
+Um efeito de degradê com esferas luminosas em desfoque no fundo (blurred glowing orbs), fazendo o cartão central do login flutuar como uma placa de vidro translúcido sobre luzes orgânicas.
+
+Minimalista Corporativo Profundo (Navy Blue & Gold Accent):
+
+Um tom azul-marinho executivo sóbrio com textura de grade técnica sutil (subtle grid pattern) e detalhes em dourado/ciano, ideal para ambiente hospitalar de alta diretoria.
+
+📋 Código Completo do app.py com o Fundo Dark Tech Gradient (Opção 1)
+Copie o código abaixo e substitua no seu arquivo app.py no GitHub:
+
+Python
+
+
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -14,80 +37,62 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. Estilização CSS de Nível Executivo e Tela de Login Impactante
+# 2. Estilização CSS Avançada com Fundo Imersivo
 st.markdown("""
     <style>
-    /* Fundo e Estilo Geral */
-    .main {
-        background: radial-gradient(circle at 10% 20%, rgb(15, 23, 42) 0%, rgb(2, 6, 23) 90%);
-        color: #F8FAFC;
-    }
-    
-    /* TELA DE LOGIN IMPACTANTE */
-    .login-container {
-        background: rgba(15, 23, 42, 0.85);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(14, 165, 233, 0.3);
-        border-radius: 20px;
-        padding: 40px;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 20px rgba(14, 165, 233, 0.15);
-        max-width: 500px;
-        margin: 40px auto;
-        text-align: center;
-        position: relative;
-    }
-    .login-container::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: linear-gradient(90deg, #0EA5E9, #10B981, #6366F1);
-        border-top-left-radius: 20px;
-        border-top-right-radius: 20px;
-    }
-    .login-badge {
-        background: rgba(14, 165, 233, 0.15);
-        color: #38BDF8;
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-size: 0.75rem;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        display: inline-block;
-        margin-bottom: 15px;
-        border: 1px solid rgba(14, 165, 233, 0.3);
-    }
-    .security-tag {
-        color: #10B981;
-        font-size: 0.8rem;
-        margin-top: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
+    /* FUNDO IMERSIVO TECH COM ILUMINAÇÃO NEON */
+    .stApp {
+        background: radial-gradient(circle at 20% 20%, rgba(14, 165, 233, 0.15) 0%, transparent 40%),
+                    radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+                    radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.08) 0%, transparent 60%),
+                    linear-gradient(180deg, #020617 0%, #0F172A 100%) !important;
+        background-attachment: fixed !important;
     }
 
-    /* Cartões KPI */
+    /* CARD DE LOGIN FUTURISTA COM GLASSMORPHISM AVANÇADO */
+    .login-box {
+        background: rgba(15, 23, 42, 0.75) !important;
+        backdrop-filter: blur(20px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+        border: 1px solid rgba(56, 189, 248, 0.25) !important;
+        border-radius: 24px !important;
+        padding: 45px 35px !important;
+        box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8),
+                    0 0 30px rgba(14, 165, 233, 0.2) !important;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .login-badge {
+        background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(16, 185, 129, 0.2));
+        color: #38BDF8;
+        padding: 6px 16px;
+        border-radius: 30px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        display: inline-block;
+        border: 1px solid rgba(56, 189, 248, 0.3);
+        margin-bottom: 20px;
+    }
+
+    /* ESTILO DOS KPIS E CARTÕES INTERNOS */
     .kpi-card {
-        background: rgba(30, 41, 59, 0.7);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-left: 5px solid #0EA5E9;
-        border-radius: 14px;
-        padding: 22px;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: rgba(30, 41, 59, 0.6) !important;
+        backdrop-filter: blur(12px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-left: 5px solid #0EA5E9 !important;
+        border-radius: 14px !important;
+        padding: 22px !important;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
     .kpi-card:hover {
-        transform: translateY(-4px);
-        border-left-width: 7px;
-        box-shadow: 0 15px 30px -5px rgba(14, 165, 233, 0.3);
-        background: rgba(30, 41, 59, 0.9);
+        transform: translateY(-4px) !important;
+        border-left-width: 7px !important;
+        box-shadow: 0 15px 30px -5px rgba(14, 165, 233, 0.3) !important;
+        background: rgba(30, 41, 59, 0.85) !important;
     }
     .kpi-title {
         color: #94A3B8;
@@ -113,31 +118,18 @@ st.markdown("""
         gap: 4px;
     }
 
-    /* Caixa Executiva do Diagnóstico */
     .executive-box {
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 100%);
-        border: 1px solid rgba(14, 165, 233, 0.25);
-        border-radius: 16px;
-        padding: 26px;
-        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
-        position: relative;
-        overflow: hidden;
-    }
-    .executive-box::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 3px;
-        background: linear-gradient(90deg, #0EA5E9, #10B981, #6366F1);
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.75) 100%) !important;
+        border: 1px solid rgba(14, 165, 233, 0.25) !important;
+        border-radius: 16px !important;
+        padding: 26px !important;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4) !important;
     }
 
-    /* Rodapé Profissional */
     .footer-container {
         margin-top: 40px;
         padding: 20px;
-        background: rgba(15, 23, 42, 0.6);
+        background: rgba(15, 23, 42, 0.5);
         border-radius: 12px;
         border-top: 1px solid rgba(255, 255, 255, 0.05);
         text-align: center;
@@ -174,7 +166,7 @@ def gerar_dados_demonstracao():
     }
     return pd.DataFrame(data)
 
-# 4. Sistema de Autenticação Impactante
+# 4. Tela de Autenticação Imersiva
 def checar_autenticacao():
     if "autenticado" not in st.session_state:
         st.session_state["autenticado"] = False
@@ -182,38 +174,39 @@ def checar_autenticacao():
     if not st.session_state["autenticado"]:
         st.write("")
         st.write("")
-        col_esq, col_centro, col_dir = st.columns([1, 2, 1])
+        col_esq, col_centro, col_dir = st.columns([1.1, 1.8, 1.1])
         
         with col_centro:
             st.markdown("""
-                <div class="login-container">
-                    <span class="login-badge">🛡️ Plataforma Restrita & Auditável</span>
-                    <h2 style="color: #F8FAFC; margin-bottom: 5px; font-weight: 800;">PEGH</h2>
-                    <h4 style="color: #0EA5E9; margin-top: 0; font-weight: 600;">Painel Estratégico de Gestão Hospitalar</h4>
-                    <p style="color: #94A3B8; font-size: 0.85rem; margin-bottom: 25px;">
-                        Ambiente corporativo de alta segurança para inteligência assistencial e tomada de decisão gerencial.
+                <div class="login-box">
+                    <span class="login-badge">🏥 SISTEMA DE INTELIGÊNCIA HOSPITALAR</span>
+                    <h1 style="color: #F8FAFC; margin-bottom: 0px; font-weight: 900; letter-spacing: -0.03em; font-size: 2.5rem;">PEGH</h1>
+                    <h4 style="color: #38BDF8; margin-top: 5px; font-weight: 600; font-size: 1.05rem;">Painel Estratégico de Gestão Hospitalar</h4>
+                    <p style="color: #94A3B8; font-size: 0.88rem; margin-top: 15px; margin-bottom: 5px;">
+                        Acesso exclusivo para alta diretoria, governança clínica e inteligência operacional.
                     </p>
                 </div>
             """, unsafe_allow_html=True)
             
+            st.write("")
             usuario = st.text_input("🔑 Identificador / Usuário", placeholder="Digite seu usuário corporativo")
             senha = st.text_input("🔒 Credencial / Senha", type="password", placeholder="••••••••")
             st.write("")
-            btn_login = st.button("🚀 Acessar Painel Executivo", use_container_width=True)
+            btn_login = st.button("🚀 Entrar na Plataforma", use_container_width=True)
 
             if btn_login:
                 if usuario == "admin" and senha == "saude2026":
                     st.session_state["autenticado"] = True
-                    st.success("Autenticação confirmada! Inicializando subsistemas...")
+                    st.success("Autenticação autorizada! Carregando subsistemas...")
                     st.rerun()
                 else:
-                    st.error("Credenciais não reconhecidas. (Acesso demo: admin / saude2026)")
+                    st.error("Credenciais incorretas. (Demo: admin / saude2026)")
             
             st.markdown("""
-                <div class="security-tag">
-                    🔒 Criptografia AES-256 | Conectividade LGPD Vigor
+                <div style="text-align: center; color: #10B981; font-size: 0.82rem; margin-top: 20px; font-weight: 600;">
+                    🛡️ Conexão Segura & Auditada | LGPD Compliance
                 </div>
-                <div style="text-align: center; color: #64748B; font-size: 0.78rem; margin-top: 25px;">
+                <div style="text-align: center; color: #64748B; font-size: 0.8rem; margin-top: 15px;">
                     Desenvolvido por <strong>Bruno Vasconcelos</strong> | COREN-PE 830739-ENF
                 </div>
             """, unsafe_allow_html=True)
