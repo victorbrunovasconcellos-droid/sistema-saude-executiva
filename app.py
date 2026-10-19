@@ -1,26 +1,3 @@
-Para transformar a tela de login em algo memorável e verdadeiramente impressionante, podemos criar uma experiência visual imersiva e moderna.
-
-Aqui estão 3 conceitos de fundo estilizados que podemos aplicar via CSS no app.py:
-
-🎨 Opções de Fundo para a Tela de Login
-Dark Tech Gradient + Mesh Animation (Recomendado):
-
-Um fundo em tom azul-noturno profundo (#020617 / #0F172A) com luzes radiais azul-ciano e roxa neon no fundo, criando um efeito de ambiente de alta tecnologia (cyberpunk / executive health).
-
-Gradients Fluídos em Movimento (Glassmorphism Neon):
-
-Um efeito de degradê com esferas luminosas em desfoque no fundo (blurred glowing orbs), fazendo o cartão central do login flutuar como uma placa de vidro translúcido sobre luzes orgânicas.
-
-Minimalista Corporativo Profundo (Navy Blue & Gold Accent):
-
-Um tom azul-marinho executivo sóbrio com textura de grade técnica sutil (subtle grid pattern) e detalhes em dourado/ciano, ideal para ambiente hospitalar de alta diretoria.
-
-📋 Código Completo do app.py com o Fundo Dark Tech Gradient (Opção 1)
-Copie o código abaixo e substitua no seu arquivo app.py no GitHub:
-
-Python
-
-
 import streamlit as st
 import pandas as pd
 import numpy as np
