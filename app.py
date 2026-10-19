@@ -14,16 +14,14 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. Estilização CSS de Nível Executivo (Glassmorphism & Dark Mode Avançado)
+# 2. Estilização CSS de Nível Executivo
 st.markdown("""
     <style>
-    /* Fundo e Estilo Geral */
     .main {
         background: radial-gradient(circle at 10% 20%, rgb(15, 23, 42) 0%, rgb(2, 6, 23) 90%);
         color: #F8FAFC;
     }
     
-    /* Cartões KPI com Efeito Glassmorphism e Animação */
     .kpi-card {
         background: rgba(30, 41, 59, 0.7);
         backdrop-filter: blur(12px);
@@ -65,7 +63,6 @@ st.markdown("""
         gap: 4px;
     }
 
-    /* Caixa Executiva do Diagnóstico */
     .executive-box {
         background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 100%);
         border: 1px solid rgba(14, 165, 233, 0.25);
@@ -85,7 +82,6 @@ st.markdown("""
         background: linear-gradient(90deg, #0EA5E9, #10B981, #6366F1);
     }
 
-    /* Assinatura e Rodapé */
     .footer-container {
         margin-top: 40px;
         padding: 20px;
@@ -290,23 +286,19 @@ if checar_autenticacao():
 
         st.divider()
 
-        # Resumo Executivo Inteligente
+        # Resumo Executivo Inteligente (FORMATADO SEM TAGS SOBRANDO)
         st.subheader("🧠 Diagnostic Intelligence & Resumo Gerencial")
         
-        resumo_texto = f"""
-        • **Volume Operacional:** Foram consolidados <b>{total_atendimentos} registos assistenciais</b> na unidade analítica.<br>
-        • **Eficiência Assistencial:** A média de permanência geral fixa-se em <b>{media_permanencia} dias</b>, mantendo rotatividade adequada de leitos.<br>
-        • **Gargalos e Oportunidades:** O setor da <b>UTI Adulto</b> concentra o maior tempo de internação e custo relativo, exigindo gestão ativa de alta hospitalar.<br>
-        • **Conformidade LGPD:** Higienização de dados ativa e sanitização realizada de acordo com as normas vigentes.
-        """
-        
         st.markdown(f"""
-            <div class="executive-box">
-                <h4 style="color: #38BDF8; margin-bottom: 12px; font-weight: 700; font-size: 1.1rem;">📋 Síntese Diagnóstica para a Diretoria</h4>
-                <div style="color: #E2E8F0; font-size: 0.95rem; line-height: 1.7;">
-                    {resumo_texto}
-                </div>
+        <div class="executive-box">
+            <h4 style="color: #38BDF8; margin-bottom: 12px; font-weight: 700; font-size: 1.1rem;">📋 Síntese Diagnóstica para a Diretoria</h4>
+            <div style="color: #E2E8F0; font-size: 0.95rem; line-height: 1.7;">
+                • <b>Volume Operacional:</b> Foram consolidados <b>{total_atendimentos} registos assistenciais</b> na unidade analítica.<br>
+                • <b>Eficiência Assistencial:</b> A média de permanência geral fixa-se em <b>{media_permanencia} dias</b>, mantendo rotatividade adequada de leitos.<br>
+                • <b>Gargalos e Oportunidades:</b> O setor da <b>UTI Adulto</b> concentra o maior tempo de internação e custo relativo, exigindo gestão ativa de alta hospitalar.<br>
+                • <b>Conformidade LGPD:</b> Higienização de dados ativa e sanitização realizada de acordo com as normas vigentes.
             </div>
+        </div>
         """, unsafe_allow_html=True)
 
         st.write("")
