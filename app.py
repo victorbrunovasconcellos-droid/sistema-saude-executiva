@@ -14,65 +14,98 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Estilização CSS de Alta Performance Visual
+# 2. Estilização CSS de Nível Executivo (Glassmorphism & Dark Mode Avançado)
 st.markdown("""
     <style>
-    /* Estilo dos Cartões KPI */
+    /* Fundo e Estilo Geral */
+    .main {
+        background: radial-gradient(circle at 10% 20%, rgb(15, 23, 42) 0%, rgb(2, 6, 23) 90%);
+        color: #F8FAFC;
+    }
+    
+    /* Cartões KPI com Efeito Glassmorphism e Animação */
     .kpi-card {
-        background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
-        border-radius: 12px;
-        padding: 22px;
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-left: 5px solid #0EA5E9;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border-radius: 14px;
+        padding: 22px;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .kpi-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 14px 20px -3px rgba(14, 165, 233, 0.25);
+        transform: translateY(-4px);
+        border-left-width: 7px;
+        box-shadow: 0 15px 30px -5px rgba(14, 165, 233, 0.3);
+        background: rgba(30, 41, 59, 0.9);
     }
     .kpi-title {
         color: #94A3B8;
-        font-size: 0.82rem;
+        font-size: 0.8rem;
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 6px;
+        letter-spacing: 0.08em;
+        margin-bottom: 8px;
     }
     .kpi-value {
         color: #F8FAFC;
-        font-size: 2.1rem;
+        font-size: 2.2rem;
         font-weight: 800;
-        line-height: 1.1;
+        letter-spacing: -0.02em;
+        line-height: 1;
     }
     .kpi-sub {
-        font-size: 0.83rem;
-        margin-top: 8px;
+        font-size: 0.82rem;
+        margin-top: 10px;
         font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 4px;
     }
 
-    /* Caixa do Resumo Executivo */
+    /* Caixa Executiva do Diagnóstico */
     .executive-box {
-        background: rgba(15, 23, 42, 0.85);
-        border: 1px solid #334155;
-        border-radius: 12px;
-        padding: 24px;
-        backdrop-filter: blur(8px);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 100%);
+        border: 1px solid rgba(14, 165, 233, 0.25);
+        border-radius: 16px;
+        padding: 26px;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+        position: relative;
+        overflow: hidden;
+    }
+    .executive-box::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, #0EA5E9, #10B981, #6366F1);
     }
 
-    /* Rodapé Profissional */
-    .footer-text {
-        color: #64748B;
-        font-size: 0.8rem;
+    /* Assinatura e Rodapé */
+    .footer-container {
+        margin-top: 40px;
+        padding: 20px;
+        background: rgba(15, 23, 42, 0.6);
+        border-radius: 12px;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
         text-align: center;
-        padding: 15px 0;
-        border-top: 1px solid #1E293B;
-        margin-top: 30px;
+    }
+    .footer-text {
+        color: #94A3B8;
+        font-size: 0.82rem;
+    }
+    .footer-author {
+        color: #38BDF8;
+        font-weight: 700;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# 2. Gerador de Dados Simulados Rápidos (Gera Credibilidade Instantânea)
+# 3. Gerador de Dados Demonstrativos
 @st.cache_data
 def gerar_dados_demonstracao():
     np.random.seed(42)
@@ -80,7 +113,7 @@ def gerar_dados_demonstracao():
     convenios = ["Unimed", "Bradesco Saúde", "SulAmérica", "SUS / MPE", "Particular"]
     diagnosticos = ["Síndrome Coronariana", "Pneumonia Comunitária", "Sepse Humana", "Pós-Op Cirúrgico", "AVC Isquêmico", "Insuficiência Respiratória"]
     
-    registros = 250
+    registros = 280
     data = {
         "ID_Prontuario": [f"PRT-{1000 + i}" for i in range(registros)],
         "Nome_Paciente": [f"Paciente {i+1}" for i in range(registros)],
@@ -93,19 +126,19 @@ def gerar_dados_demonstracao():
     }
     return pd.DataFrame(data)
 
-# 3. Autenticação Simples
+# 4. Autenticação Simples
 def checar_autenticacao():
     if "autenticado" not in st.session_state:
         st.session_state["autenticado"] = False
 
     if not st.session_state["autenticado"]:
         st.markdown("## 🔐 Acesso Restrito - Painel Estratégico de Gestão Hospitalar")
-        st.caption("Insira suas credenciais corporativas para acessar a plataforma gerencial.")
+        st.caption("Insira as suas credenciais corporativas para aceder à plataforma gerencial.")
         
         col1, col2 = st.columns([1, 2])
         with col1:
-            usuario = st.text_input("Usuário")
-            senha = st.text_input("Senha", type="password")
+            usuario = st.text_input("Utilizador")
+            senha = st.text_input("Palavra-passe", type="password")
             btn_login = st.button("Entrar no Sistema", use_container_width=True)
 
             if btn_login:
@@ -114,11 +147,11 @@ def checar_autenticacao():
                     st.success("Acesso autorizado!")
                     st.rerun()
                 else:
-                    st.error("Usuário ou senha incorretos. (Dica: admin / saude2026)")
+                    st.error("Utilizador ou palavra-passe incorretos. (Acesso demo: admin / saude2026)")
         return False
     return True
 
-# 4. Sanitização LGPD
+# 5. Sanitização LGPD
 def anonimizar_dados(df):
     df_limpo = df.copy()
     colunas_sensiveis = ['nome', 'paciente', 'cpf', 'prontuario', 'rg', 'documento', 'telefone']
@@ -129,7 +162,7 @@ def anonimizar_dados(df):
             
     return df_limpo
 
-# 5. Processamento de Arquivos Enviados
+# 6. Processamento de Arquivos
 @st.cache_data(show_spinner=False)
 def processar_arquivo(uploaded_file):
     file_type = uploaded_file.name.split('.')[-1].lower()
@@ -150,32 +183,29 @@ def processar_arquivo(uploaded_file):
 # --- INÍCIO DA APLICAÇÃO ---
 if checar_autenticacao():
 
-    # Cabeçalho
+    # Cabeçalho Principal
     st.title("🏥 PAINEL ESTRATÉGICO DE GESTÃO HOSPITALAR")
-    st.caption("Plataforma Autônoma de Inteligência Assistencial, KPIs Executivos e Análise de Desempenho")
+    st.caption("Plataforma Executiva de Inteligência Assistencial, KPIs Gerenciais e Governação de Dados")
     st.divider()
 
-    # Barra Lateral
+    # Barra Lateral (Sidebar)
     with st.sidebar:
-        st.header("⚙️ Painel de Controle")
+        st.header("⚙️ Painel de Controlo")
         uploaded_file = st.file_uploader(
-            "Carregar Arquivo Próprio (PDF, Excel ou CSV)", 
+            "Carregar Ficheiro Próprio (PDF, Excel ou CSV)", 
             type=["xlsx", "xls", "csv", "pdf"]
         )
         
         st.divider()
         st.markdown("### 🔍 Filtros Interativos")
         
-        # Carregar ou Usar Base Demonstrativa
         if uploaded_file is None:
             df_base = gerar_dados_demonstracao()
-            modo_demo = True
             st.info("💡 Exibindo **Base Demonstrativa** hospitalar simulada.")
         else:
             dados_up, tipo_up = processar_arquivo(uploaded_file)
             if tipo_up in ["excel", "csv"]:
                 df_base = dados_up
-                modo_demo = False
             else:
                 df_base = None
 
@@ -190,11 +220,13 @@ if checar_autenticacao():
             df_filtrado = df_base
 
         st.divider()
-        st.markdown("### 🛡️ Governança LGPD")
+        st.markdown("### 🛡️ Governação LGPD")
         aplicar_lgpd = st.checkbox("Anonimizar dados sensíveis", value=True)
         
         st.divider()
-        st.caption("Desenvolvido por **Bruno Vasconcelos**")
+        st.markdown("👨‍⚕️ **Responsável Técnico:**")
+        st.markdown("<span class='footer-author'>Bruno Vasconcelos</span><br><small>Especialista em Gestão de Saúde</small>", unsafe_allow_html=True)
+        st.write("")
         if st.button("Sair / Logout"):
             st.session_state["autenticado"] = False
             st.rerun()
@@ -202,7 +234,6 @@ if checar_autenticacao():
     # MÉTODOS DE EXIBIÇÃO DE KPIS E GRÁFICOS
     if df_filtrado is not None and isinstance(df_filtrado, pd.DataFrame):
         
-        # Cálculos Dinâmicos
         total_atendimentos = len(df_filtrado)
         
         if "Dias_Permanencia" in df_filtrado.columns:
@@ -215,7 +246,7 @@ if checar_autenticacao():
         else:
             casos_criticos = 12
 
-        taxa_ocupacao = min(round(80 + (total_atendimentos % 15) + np.random.uniform(-2, 3), 1), 98.5)
+        taxa_ocupacao = min(round(82 + (total_atendimentos % 12) + np.random.uniform(-1, 2), 1), 98.0)
 
         st.subheader("📌 Indicadores Chave de Desempenho (KPIs)")
         
@@ -244,7 +275,7 @@ if checar_autenticacao():
                 <div class="kpi-card" style="border-left-color: #F59E0B;">
                     <div class="kpi-title">Taxa de Ocupação</div>
                     <div class="kpi-value">{taxa_ocupacao}%</div>
-                    <div class="kpi-sub" style="color: #F59E0B;">→ Capacidade Estável</div>
+                    <div class="kpi-sub" style="color: #F59E0B;">→ Capacidade Operacional Normal</div>
                 </div>
             """, unsafe_allow_html=True)
             
@@ -253,35 +284,34 @@ if checar_autenticacao():
                 <div class="kpi-card" style="border-left-color: #EF4444;">
                     <div class="kpi-title">Alertas Críticos</div>
                     <div class="kpi-value">{casos_criticos}</div>
-                    <div class="kpi-sub" style="color: #EF4444;">⚠ Pacientes em alta vigilância</div>
+                    <div class="kpi-sub" style="color: #EF4444;">⚠ Monitorização em alta vigilância</div>
                 </div>
             """, unsafe_allow_html=True)
 
         st.divider()
 
-        # Resumo Inteligente Executivo
+        # Resumo Executivo Inteligente
         st.subheader("🧠 Diagnostic Intelligence & Resumo Gerencial")
         
         resumo_texto = f"""
-        • **Volume Geral:** Foram consolidados **{total_atendimentos} registros de atendimentos** no período selecionado.<br>
-        • **Eficiência Assistencial:** A média de permanência geral é de **{media_permanencia} dias**, variando com maior severidade na UTI Adulto.<br>
-        • **Análise Financeira & Custos:** O setor com maior impacto financeiro acumulado é a **UTI**, demandando acompanhamento contínuo de giro de leito.<br>
-        • **Conformidade LGPD:** Todos os dados expostos foram higienizados e preparados de acordo com a Lei 13.709/2018.
+        • **Volume Operacional:** Foram consolidados <b>{total_atendimentos} registos assistenciais</b> na unidade analítica.<br>
+        • **Eficiência Assistencial:** A média de permanência geral fixa-se em <b>{media_permanencia} dias</b>, mantendo rotatividade adequada de leitos.<br>
+        • **Gargalos e Oportunidades:** O setor da <b>UTI Adulto</b> concentra o maior tempo de internação e custo relativo, exigindo gestão ativa de alta hospitalar.<br>
+        • **Conformidade LGPD:** Higienização de dados ativa e sanitização realizada de acordo com as normas vigentes.
         """
         
         st.markdown(f"""
             <div class="executive-box">
-                <h4 style="color: #0EA5E9; margin-bottom: 12px; font-weight: 700;">📋 Síntese Diagnóstica para a Liderança</h4>
-                <div style="color: #CBD5E1; font-size: 0.95rem; line-height: 1.6;">
+                <h4 style="color: #38BDF8; margin-bottom: 12px; font-weight: 700; font-size: 1.1rem;">📋 Síntese Diagnóstica para a Diretoria</h4>
+                <div style="color: #E2E8F0; font-size: 0.95rem; line-height: 1.7;">
                     {resumo_texto}
                 </div>
             </div>
         """, unsafe_allow_html=True)
 
         st.write("")
-        st.subheader("📊 Gráficos Interativos Dinâmicos")
+        st.subheader("📊 Visualização Gráfica Interativa")
         
-        # Anonimização de Tabela
         if aplicar_lgpd:
             df_exibicao = anonimizar_dados(df_filtrado)
         else:
@@ -296,10 +326,11 @@ if checar_autenticacao():
                 if "Setor" in df_filtrado.columns:
                     fig1 = px.histogram(
                         df_filtrado, x="Setor", color="Status_Alerta" if "Status_Alerta" in df_filtrado.columns else None,
-                        title="Volume de Atendimentos por Setor Hospitalar",
+                        title="Distribuição de Atendimentos por Setor",
                         template="plotly_dark",
                         color_discrete_map={"Normal": "#10B981", "Atenção": "#F59E0B", "Crítico": "#EF4444"}
                     )
+                    fig1.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
                     st.plotly_chart(fig1, use_container_width=True)
                 else:
                     fig1 = px.bar(df_filtrado.head(10), y=df_filtrado.columns[0], template="plotly_dark")
@@ -309,9 +340,10 @@ if checar_autenticacao():
                 if "Convenio" in df_filtrado.columns:
                     fig2 = px.pie(
                         df_filtrado, names="Convenio", title="Distribuição por Convênio / Fonte Pagadora",
-                        template="plotly_dark", hole=0.45,
-                        color_discrete_sequence=px.colors.qualitative.Pastel
+                        template="plotly_dark", hole=0.5,
+                        color_discrete_sequence=px.colors.qualitative.Dark24
                     )
+                    fig2.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
                     st.plotly_chart(fig2, use_container_width=True)
                 elif len(df_filtrado.columns) > 1:
                     fig2 = px.pie(df_filtrado.head(10), names=df_filtrado.columns[1], template="plotly_dark", hole=0.4)
@@ -320,10 +352,9 @@ if checar_autenticacao():
         with tab2:
             st.dataframe(df_exibicao, use_container_width=True)
             
-            # Exportação de Dados
             csv_data = df_exibicao.to_csv(index=False).encode('utf-8')
             st.download_button(
-                label="📥 Download do Relatório Higienizado (CSV)",
+                label="📥 Exportar Relatório Sanitizado (CSV)",
                 data=csv_data,
                 file_name="relatorio_gestao_hospitalar.csv",
                 mime="text/csv"
@@ -331,12 +362,14 @@ if checar_autenticacao():
 
     elif uploaded_file is not None and tipo_up == "pdf":
         st.subheader("📄 Relatório Extraído do PDF")
-        st.text_area("Conteúdo Bruto do Arquivo PDF:", dados_up, height=400)
+        st.text_area("Conteúdo do Documento:", dados_up, height=400)
 
-    # Rodapé Profissional com seu Nome
+    # Rodapé Profissional
     st.markdown("""
-        <div class="footer-text">
-            <strong>Painel Estratégico de Gestão Hospitalar</strong> • Desenvolvido por <strong>Bruno Vasconcelos</strong><br>
-            <i>Especialista em Gestão e Inteligência de Saúde | COREN-PE 830739-ENF</i>
+        <div class="footer-container">
+            <div class="footer-text">
+                <strong>Painel Estratégico de Gestão Hospitalar</strong> • Desenvolvido por <span class="footer-author">Bruno Vasconcelos</span><br>
+                <small>Especialista em Gestão e Inteligência de Saúde | COREN-PE 830739-ENF</small>
+            </div>
         </div>
     """, unsafe_allow_html=True)
