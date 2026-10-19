@@ -7,7 +7,7 @@ import io
 
 # 1. Configuração da Página
 st.set_page_config(
-    page_title="Executive Health Intelligence",
+    page_title="Painel Estratégico de Gestão Hospitalar",
     page_icon="🏥",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -57,13 +57,13 @@ def checar_autenticacao():
         st.session_state["autenticado"] = False
 
     if not st.session_state["autenticado"]:
-        st.markdown("## 🔐 Acesso Restrito - Executive Health Intelligence")
-        st.caption("Por razões de segurança e LGPD, insira suas credenciais corporativas.")
+        st.markdown("## 🔐 Acesso Restrito - Painel Estratégico de Gestão Hospitalar")
+        st.caption("Por razões de segurança e conformidade LGPD, insira as suas credenciais corporativas.")
         
         col1, col2 = st.columns([1, 2])
         with col1:
-            usuario = st.text_input("Usuário")
-            senha = st.text_input("Senha", type="password")
+            usuario = st.text_input("Utilizador")
+            senha = st.text_input("Palavra-passe", type="password")
             btn_login = st.button("Entrar no Sistema", use_container_width=True)
 
             if btn_login:
@@ -72,7 +72,7 @@ def checar_autenticacao():
                     st.success("Acesso autorizado!")
                     st.rerun()
                 else:
-                    st.error("Usuário ou senha incorretos.")
+                    st.error("Utilizador ou palavra-passe incorretos.")
         return False
     return True
 
@@ -92,8 +92,8 @@ def gerar_resumo_executivo(df):
     num_linhas = len(df)
     num_colunas = len(df.columns)
     
-    resumo = f"• **Total de Registros Analisados:** {num_linhas:,} linhas de dados de saúde.\n"
-    resumo += f"• **Atributos Monitorados:** {num_colunas} variáveis operacionais e clínicas.\n"
+    resumo = f"• **Total de Registos Analisados:** {num_linhas:,} linhas de dados operacionais e clínicos.\n"
+    resumo += f"• **Atributos Monitorizados:** {num_colunas} variáveis assistenciais.\n"
     resumo += "• **Gargalos e Oportunidades:** A taxa de permanência apresenta estabilidade operacional dentro dos parâmetros normativos. Recomenda-se acompanhamento preventivo nos setores de maior rotatividade.\n"
     resumo += "• **Conformidade LGPD:** Todos os identificadores individuais de pacientes foram devidamente sanitizados antes do processamento gerencial."
     return resumo
@@ -123,24 +123,24 @@ def processar_arquivo(uploaded_file):
 if checar_autenticacao():
 
     # Cabeçalho Principal
-    st.title("🏥 EXECUTIVE HEALTH INTELLIGENCE")
-    st.caption("Plataforma Inteligente de Extração, KPIs Executivos e Análise de Dados de Saúde")
+    st.title("🏥 PAINEL ESTRATÉGICO DE GESTÃO HOSPITALAR")
+    st.caption("Plataforma de Inteligência de Extração, KPIs Executivos e Análise de Dados de Saúde")
     st.divider()
 
     # Barra Lateral
     with st.sidebar:
-        st.header("⚙️ Painel de Controle")
+        st.header("⚙️ Painel de Controlo")
         uploaded_file = st.file_uploader(
-            "Carregar Relatório Saúde (PDF, Excel ou CSV)", 
+            "Carregar Relatório de Saúde (PDF, Excel ou CSV)", 
             type=["xlsx", "xls", "csv", "pdf"]
         )
         
         st.divider()
-        st.markdown("### 🛡️ Governança LGPD")
+        st.markdown("### 🛡️ Governação LGPD")
         aplicar_lgpd = st.checkbox("Anonimizar dados sensíveis", value=True)
         
         st.divider()
-        if st.button("Sair / Logout"):
+        if st.button("Terminar Sessão / Logout"):
             st.session_state["autenticado"] = False
             st.rerun()
 
@@ -195,8 +195,8 @@ if checar_autenticacao():
             else:
                 dados_exibicao = dados.copy()
 
-            # Módulo de Resumo Executivo Inteligente (Fase 3)
-            st.subheader("🧠 Diagnostic Intelligence & Resumo Executivo")
+            # Módulo de Resumo Executivo Inteligente
+            st.subheader("🧠 Diagnóstico Inteligente & Resumo Executivo")
             with st.container():
                 st.markdown(f"""
                     <div class="executive-box">
@@ -223,12 +223,12 @@ if checar_autenticacao():
             with tab2:
                 st.dataframe(dados_exibicao, use_container_width=True)
                 
-                # Botão de Exportação de Dados (Fase 3)
+                # Botão de Exportação de Dados
                 csv_buffer = dados_exibicao.to_csv(index=False).encode('utf-8')
                 st.download_button(
                     label="📥 Exportar Relatório Sanitizado (CSV)",
                     data=csv_buffer,
-                    file_name="relatorio_saude_executivo.csv",
+                    file_name="relatorio_gestao_hospitalar.csv",
                     mime="text/csv"
                 )
                 
