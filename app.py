@@ -1,21 +1,3 @@
-Com certeza! A tela de login é a primeira impressão que a diretoria ou os contratantes têm do seu sistema. Ela precisa transmitir autoridade, inovação e alta credibilidade logo no primeiro segundo.
-
-Para tornar a tela de login altamente impactante, podemos adicionar:
-
-Card Centralizado com Efeito Glassmorphic Avançado: Um painel elevado com brilho suave e borda azul fluorescente.
-
-Insígnia/Ícone de Segurança Ativa: Elementos visuais como "Certificado LGPD Compliant" e "Criptografia de Ponta a Ponta".
-
-Métricas de Entrada: Um mini-painel com status de conexão do servidor (Status: Operacional | Servidores: Recife/PE).
-
-Sua Assinatura Profissional em Destaque: O nome Bruno Vasconcelos e sua credencial profissional já visíveis na própria tela de acesso.
-
-📋 Código Atualizado do app.py com Tela de Login Impactante
-Copie o código completo abaixo para substituir no seu repositório no GitHub:
-
-Python
-
-
 import streamlit as st
 import pandas as pd
 import numpy as np
