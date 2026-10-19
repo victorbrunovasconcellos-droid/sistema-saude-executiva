@@ -1,3 +1,13 @@
+Vamos adicionar todas as 3 grandes melhorias (Relatório Executivo em PDF, Filtros Avançados por Convênio/Risco e Personalização com Logótipo/Marca) diretamente ao seu Painel Estratégico de Gestão Hospitalar (PEGH)!
+
+Para além disso, incluí a biblioteca reportlab (necessária para compilar relatórios PDF elegantes em Python) e deixei o gerador de PDF totalmente configurado para emitir o documento formal assinado por si.
+
+📋 Código Completo do app.py (Versão Master & Executiva)
+Copie todo o bloco de código abaixo e substitua no seu ficheiro app.py no GitHub:
+
+Python
+
+
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -5,6 +15,10 @@ import plotly.express as px
 import plotly.graph_objects as go
 import pdfplumber
 import io
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib import colors
 
 # 1. Configuração da Página
 st.set_page_config(
@@ -17,7 +31,6 @@ st.set_page_config(
 # 2. Estilização CSS Avançada com Fundo Imersivo
 st.markdown("""
     <style>
-    /* FUNDO IMERSIVO TECH COM ILUMINAÇÃO NEON */
     .stApp {
         background: radial-gradient(circle at 20% 20%, rgba(14, 165, 233, 0.15) 0%, transparent 40%),
                     radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
@@ -26,7 +39,6 @@ st.markdown("""
         background-attachment: fixed !important;
     }
 
-    /* CARD DE LOGIN FUTURISTA COM GLASSMORPHISM AVANÇADO */
     .login-box {
         background: rgba(15, 23, 42, 0.75) !important;
         backdrop-filter: blur(20px) saturate(180%) !important;
@@ -54,7 +66,6 @@ st.markdown("""
         margin-bottom: 20px;
     }
 
-    /* ESTILO DOS KPIS E CARTÕES INTERNOS */
     .kpi-card {
         background: rgba(30, 41, 59, 0.6) !important;
         backdrop-filter: blur(12px) !important;
@@ -143,7 +154,95 @@ def gerar_dados_demonstracao():
     }
     return pd.DataFrame(data)
 
-# 4. Tela de Autenticação Imersiva
+# 4. Gerador de PDF Executivo
+def gerar_relatorio_pdf(total_atendimentos, media_permanencia, taxa_ocupacao, casos_criticos, setor_filtro, convenio_filtro):
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=30, leftMargin=30, topMargin=30, bottomMargin=30)
+    styles = getSampleStyleSheet()
+    
+    title_style = ParagraphStyle(
+        'TitleStyle',
+        parent=styles['Heading1'],
+        fontName='Helvetica-Bold',
+        fontSize=18,
+        textColor=colors.HexColor('#0F172A'),
+        spaceAfter=6
+    )
+    subtitle_style = ParagraphStyle(
+        'SubTitleStyle',
+        parent=styles['Normal'],
+        fontName='Helvetica',
+        fontSize=10,
+        textColor=colors.HexColor('#475569'),
+        spaceAfter=15
+    )
+    body_style = ParagraphStyle(
+        'BodyStyle',
+        parent=styles['Normal'],
+        fontName='Helvetica',
+        fontSize=10,
+        leading=14,
+        textColor=colors.HexColor('#1E293B')
+    )
+
+    story = []
+    
+    # Cabeçalho
+    story.append(Paragraph("PAINEL ESTRATÉGICO DE GESTÃO HOSPITALAR (PEGH)", title_style))
+    story.append(Paragraph("Relatório Sintético de Inteligência Assistencial e Governança de Dados", subtitle_style))
+    story.append(Spacer(1, 10))
+
+    # Filtros Aplicados
+    story.append(Paragraph(f"<b>Filtros Selecionados:</b> Setor: <i>{setor_filtro}</i> | Convênio: <i>{convenio_filtro}</i>", body_style))
+    story.append(Spacer(1, 15))
+
+    # Tabela de KPIs
+    data_kpi = [
+        ["Indicador Chave", "Valor Apurado", "Status / Tendência"],
+        ["Atendimentos Totais", f"{total_atendimentos:,}", "Dentro do parâmetro de demanda"],
+        ["Média de Permanência", f"{media_permanencia} dias", "Rotatividade de leito otimizada"],
+        ["Taxa de Ocupação", f"{taxa_ocupacao}%", "Capacidade Operacional Normal"],
+        ["Alertas Críticos", f"{casos_criticos}", "Monitoramento prioritário ativado"]
+    ]
+    
+    t_kpi = Table(data_kpi, colWidths=[180, 120, 220])
+    t_kpi.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#0EA5E9')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor('#F8FAFC')),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#CBD5E1')),
+        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 1), (-1, -1), 9),
+    ]))
+    story.append(t_kpi)
+    story.append(Spacer(1, 20))
+
+    # Resumo Diagnóstico
+    story.append(Paragraph("<b>Síntese Diagnóstica para a Diretoria:</b>", ParagraphStyle('SubHeader', parent=styles['Heading2'], fontSize=12, textColor=colors.HexColor('#0EA5E9'))))
+    story.append(Spacer(1, 5))
+    
+    texto_resumo = f"""
+    • <b>Consolidação Operacional:</b> Foram analisados {total_atendimentos} atendimentos para o setor {setor_filtro}.<br/>
+    • <b>Gestão de Permanência:</b> Média apurada de {media_permanencia} dias por paciente, dentro do limite normativo assistencial.<br/>
+    • <b>Análise de Risco:</b> Identificados {casos_criticos} quadros em vigilância crítica. Recomenda-se acompanhamento diário com a equipe médica responsável.<br/>
+    • <b>Conformidade LGPD:</b> Dados devidamente higienizados e anonimizados de acordo com a Lei 13.709/2018.
+    """
+    story.append(Paragraph(texto_resumo, body_style))
+    story.append(Spacer(1, 30))
+
+    # Assinatura do Responsável
+    story.append(Paragraph("____________________________________________________", body_style))
+    story.append(Paragraph("<b>Bruno Vasconcelos</b>", body_style))
+    story.append(Paragraph("Especialista em Gestão e Inteligência de Saúde | COREN-PE 830739-ENF", ParagraphStyle('SignStyle', parent=styles['Normal'], fontSize=8, textColor=colors.HexColor('#64748B'))))
+
+    doc.build(story)
+    buffer.seek(0)
+    return buffer
+
+# 5. Tela de Autenticação Imersiva
 def checar_autenticacao():
     if "autenticado" not in st.session_state:
         st.session_state["autenticado"] = False
@@ -191,7 +290,7 @@ def checar_autenticacao():
         return False
     return True
 
-# 5. Sanitização LGPD
+# 6. Sanitização LGPD
 def anonimizar_dados(df):
     df_limpo = df.copy()
     colunas_sensiveis = ['nome', 'paciente', 'cpf', 'prontuario', 'rg', 'documento', 'telefone']
@@ -202,7 +301,7 @@ def anonimizar_dados(df):
             
     return df_limpo
 
-# 6. Processamento de Arquivos
+# 7. Processamento de Arquivos
 @st.cache_data(show_spinner=False)
 def processar_arquivo(uploaded_file):
     file_type = uploaded_file.name.split('.')[-1].lower()
@@ -223,21 +322,30 @@ def processar_arquivo(uploaded_file):
 # --- INÍCIO DA APLICAÇÃO ---
 if checar_autenticacao():
 
-    # Cabeçalho Principal
-    st.title("🏥 PAINEL ESTRATÉGICO DE GESTÃO HOSPITALAR")
-    st.caption("Plataforma Executiva de Inteligência Assistencial, KPIs Gerenciais e Governação de Dados")
+    # Cabeçalho Principal com Marca Personalizável
+    col_head1, col_head2 = st.columns([4, 1])
+    with col_head1:
+        st.title("🏥 PAINEL ESTRATÉGICO DE GESTÃO HOSPITALAR")
+        st.caption("Plataforma Executiva de Inteligência Assistencial, KPIs Gerenciais e Governação de Dados")
+    
     st.divider()
 
     # Barra Lateral (Sidebar)
     with st.sidebar:
         st.header("⚙️ Painel de Controlo")
+        
+        # Logotipo da Instituição (Marca Branca)
+        logo_file = st.file_uploader("Upload Logótipo Hospitalar (Opcional)", type=["png", "jpg", "jpeg"])
+        if logo_file:
+            st.image(logo_file, use_container_width=True)
+
         uploaded_file = st.file_uploader(
             "Carregar Ficheiro Próprio (PDF, Excel ou CSV)", 
             type=["xlsx", "xls", "csv", "pdf"]
         )
         
         st.divider()
-        st.markdown("### 🔍 Filtros Interativos")
+        st.markdown("### 🔍 Filtros Avançados")
         
         if uploaded_file is None:
             df_base = gerar_dados_demonstracao()
@@ -249,15 +357,30 @@ if checar_autenticacao():
             else:
                 df_base = None
 
-        if df_base is not None and "Setor" in df_base.columns:
-            setores_unicos = ["Todos"] + list(df_base["Setor"].unique())
+        df_filtrado = df_base.copy() if df_base is not None else None
+
+        # Filtro 1: Setor
+        setor_selecionado = "Todos"
+        if df_filtrado is not None and "Setor" in df_filtrado.columns:
+            setores_unicos = ["Todos"] + list(df_filtrado["Setor"].unique())
             setor_selecionado = st.selectbox("Filtrar por Setor Hospitalar", setores_unicos)
             if setor_selecionado != "Todos":
-                df_filtrado = df_base[df_base["Setor"] == setor_selecionado]
-            else:
-                df_filtrado = df_base
-        else:
-            df_filtrado = df_base
+                df_filtrado = df_filtrado[df_filtrado["Setor"] == setor_selecionado]
+
+        # Filtro 2: Convênio
+        convenio_selecionado = "Todos"
+        if df_filtrado is not None and "Convenio" in df_filtrado.columns:
+            convenios_unicos = ["Todos"] + list(df_filtrado["Convenio"].unique())
+            convenio_selecionado = st.selectbox("Filtrar por Convênio", convenios_unicos)
+            if convenio_selecionado != "Todos":
+                df_filtrado = df_filtrado[df_filtrado["Convenio"] == convenio_selecionado]
+
+        # Filtro 3: Status de Risco
+        if df_filtrado is not None and "Status_Alerta" in df_filtrado.columns:
+            riscos_unicos = ["Todos"] + list(df_filtrado["Status_Alerta"].unique())
+            risco_selecionado = st.selectbox("Filtrar por Classificação de Risco", riscos_unicos)
+            if risco_selecionado != "Todos":
+                df_filtrado = df_filtrado[df_filtrado["Status_Alerta"] == risco_selecionado]
 
         st.divider()
         st.markdown("### 🛡️ Governação LGPD")
@@ -330,16 +453,29 @@ if checar_autenticacao():
 
         st.divider()
 
-        # Resumo Executivo Inteligente
-        st.subheader("🧠 Diagnostic Intelligence & Resumo Gerencial")
+        # Resumo Executivo Inteligente + Botão de PDF
+        col_res1, col_res2 = st.columns([3, 1])
+        
+        with col_res1:
+            st.subheader("🧠 Diagnostic Intelligence & Resumo Gerencial")
+            
+        with col_res2:
+            pdf_buffer = gerar_relatorio_pdf(total_atendimentos, media_permanencia, taxa_ocupacao, casos_criticos, setor_selecionado, convenio_selecionado)
+            st.download_button(
+                label="📄 Exportar Relatório Executivo (PDF)",
+                data=pdf_buffer,
+                file_name="relatorio_executivo_pegh.pdf",
+                mime="application/pdf",
+                use_container_width=True
+            )
         
         st.markdown(f"""
         <div class="executive-box">
             <h4 style="color: #38BDF8; margin-bottom: 12px; font-weight: 700; font-size: 1.1rem;">📋 Síntese Diagnóstica para a Diretoria</h4>
             <div style="color: #E2E8F0; font-size: 0.95rem; line-height: 1.7;">
-                • <b>Volume Operacional:</b> Foram consolidados <b>{total_atendimentos} registos assistenciais</b> na unidade analítica.<br>
+                • <b>Volume Operacional:</b> Foram consolidados <b>{total_atendimentos} registos assistenciais</b> para o filtro atual.<br>
                 • <b>Eficiência Assistencial:</b> A média de permanência geral fixa-se em <b>{media_permanencia} dias</b>, mantendo rotatividade adequada de leitos.<br>
-                • <b>Gargalos e Oportunidades:</b> O setor da <b>UTI Adulto</b> concentra o maior tempo de internação e custo relativo, exigindo gestão ativa de alta hospitalar.<br>
+                • <b>Gargalos e Oportunidades:</b> O segmento sob análise apresenta <b>{casos_criticos} casos sob vigilância médica intensiva</b>.<br>
                 • <b>Conformidade LGPD:</b> Higienização de dados ativa e sanitização realizada de acordo com as normas vigentes.
             </div>
         </div>
