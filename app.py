@@ -123,7 +123,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 3. Gerador de Dados Demonstrativos
+# 3. Gerador de Dados Demonstrativos (Compatível com o novo formato de colunas)
 @st.cache_data
 def gerar_dados_demonstracao():
     np.random.seed(42)
@@ -133,14 +133,14 @@ def gerar_dados_demonstracao():
     
     registros = 280
     data = {
-        "ID_Prontuario": [f"PRT-{1000 + i}" for i in range(registros)],
-        "Nome_Paciente": [f"Paciente {i+1}" for i in range(registros)],
         "Setor": np.random.choice(setores, registros, p=[0.2, 0.35, 0.25, 0.1, 0.1]),
         "Convenio": np.random.choice(convenios, registros),
         "Diagnostico": np.random.choice(diagnosticos, registros),
         "Dias_Permanencia": np.random.randint(1, 14, registros),
         "Custo_Atendimento": np.random.uniform(2500, 38000, registros).round(2),
-        "Status_Alerta": np.random.choice(["Normal", "Atenção", "Crítico"], registros, p=[0.7, 0.2, 0.1])
+        "Status_Alerta": np.random.choice(["Normal", "Atenção", "Crítico"], registros, p=[0.7, 0.2, 0.1]),
+        "ID_Prontuario": [f"PRT-{1000 + i}" for i in range(registros)],
+        "Nome_Paciente": [f"Paciente {i+1}" for i in range(registros)]
     }
     return pd.DataFrame(data)
 
@@ -307,23 +307,30 @@ def processar_arquivo(uploaded_file):
 # --- INÍCIO DA APLICAÇÃO ---
 if checar_autenticacao():
 
-    col_head1, col_head2 = st.columns([4, 1])
-    with col_head1:
-        st.title("🏥 PAINEL ESTRATÉGICO DE GESTÃO HOSPITALAR")
+    # Gerenciamento de Logotipo na Barra Lateral e Exibição no Topo
+    logo_file = st.sidebar.file_uploader("Upload Logótipo Hospitalar (Opcional)", type=["png", "jpg", "jpeg"])
+
+    # Cabeçalho Principal com Suporte a Logótipo Dinâmico
+    col_logo, col_title = st.columns([1, 4])
+    
+    with col_logo:
+        if logo_file is not None:
+            st.image(logo_file, width=120)
+        else:
+            st.markdown("### 🏥 PEGH")
+
+    with col_title:
+        st.title("PAINEL ESTRATÉGICO DE GESTÃO HOSPITALAR")
         st.caption("Plataforma Executiva de Inteligência Assistencial, KPIs Gerenciais e Governação de Dados")
     
     st.divider()
 
     with st.sidebar:
         st.header("⚙️ Painel de Controlo")
-        
-        logo_file = st.file_uploader("Upload Logótipo Hospitalar (Opcional)", type=["png", "jpg", "jpeg"])
-        if logo_file:
-            st.image(logo_file, use_container_width=True)
 
         uploaded_file = st.file_uploader(
-            "Carregar Ficheiro Próprio (PDF, Excel ou CSV)", 
-            type=["xlsx", "xls", "csv", "pdf"]
+            "Carregar Ficheiro Próprio (Excel ou CSV)", 
+            type=["xlsx", "xls", "csv"]
         )
         
         st.divider()
@@ -508,10 +515,6 @@ if checar_autenticacao():
                 file_name="relatorio_gestao_hospitalar.csv",
                 mime="text/csv"
             )
-
-    elif uploaded_file is not None and tipo_up == "pdf":
-        st.subheader("📄 Relatório Extraído do PDF")
-        st.text_area("Conteúdo do Documento:", dados_up, height=400)
 
     st.markdown("""
         <div class="footer-container">
