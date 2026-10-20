@@ -19,18 +19,34 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. Estilização CSS Avançada com Fundo Imersivo
-st.markdown("""
+# Modo Apresentação / War Room State
+if "modo_apresentacao" not in st.session_state:
+    st.session_state["modo_apresentacao"] = False
+
+# 2. Estilização CSS Avançada com Fundo Imersivo & Suporte a War Room Mode
+css_war_room = ""
+if st.session_state.get("modo_apresentacao", False):
+    css_war_room = """
+        [data-testid="stSidebar"] { display: none !important; }
+        footer { display: none !important; }
+        header { display: none !important; }
+        .block-container { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+        .kpi-value { font-size: 2.8rem !important; }
+        .kpi-card { border-left-width: 8px !important; padding: 26px !important; }
+    """
+
+st.markdown(f"""
     <style>
-    .stApp {
+    {css_war_room}
+    .stApp {{
         background: radial-gradient(circle at 20% 20%, rgba(14, 165, 233, 0.15) 0%, transparent 40%),
                     radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
                     radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.08) 0%, transparent 60%),
                     linear-gradient(180deg, #020617 0%, #0F172A 100%) !important;
         background-attachment: fixed !important;
-    }
+    }}
 
-    .login-box {
+    .login-box {{
         background: rgba(15, 23, 42, 0.75) !important;
         backdrop-filter: blur(20px) saturate(180%) !important;
         -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
@@ -41,9 +57,9 @@ st.markdown("""
                     0 0 30px rgba(14, 165, 233, 0.2) !important;
         text-align: center;
         margin-top: 20px;
-    }
+    }}
 
-    .login-badge {
+    .login-badge {{
         background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(16, 185, 129, 0.2));
         color: #38BDF8;
         padding: 6px 16px;
@@ -55,9 +71,9 @@ st.markdown("""
         display: inline-block;
         border: 1px solid rgba(56, 189, 248, 0.3);
         margin-bottom: 20px;
-    }
+    }}
 
-    .kpi-card {
+    .kpi-card {{
         background: rgba(30, 41, 59, 0.6) !important;
         backdrop-filter: blur(12px) !important;
         border: 1px solid rgba(255, 255, 255, 0.08) !important;
@@ -66,61 +82,61 @@ st.markdown("""
         padding: 22px !important;
         box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    }
-    .kpi-card:hover {
+    }}
+    .kpi-card:hover {{
         transform: translateY(-4px) !important;
         border-left-width: 7px !important;
         box-shadow: 0 15px 30px -5px rgba(14, 165, 233, 0.3) !important;
         background: rgba(30, 41, 59, 0.85) !important;
-    }
-    .kpi-title {
+    }}
+    .kpi-title {{
         color: #94A3B8;
         font-size: 0.8rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.08em;
         margin-bottom: 8px;
-    }
-    .kpi-value {
+    }}
+    .kpi-value {{
         color: #F8FAFC;
         font-size: 2.2rem;
         font-weight: 800;
         letter-spacing: -0.02em;
         line-height: 1;
-    }
-    .kpi-sub {
+    }}
+    .kpi-sub {{
         font-size: 0.82rem;
         margin-top: 10px;
         font-weight: 600;
         display: flex;
         align-items: center;
         gap: 4px;
-    }
+    }}
 
-    .executive-box {
+    .executive-box {{
         background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.75) 100%) !important;
         border: 1px solid rgba(14, 165, 233, 0.25) !important;
         border-radius: 16px !important;
         padding: 26px !important;
         box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4) !important;
-    }
+    }}
 
-    .footer-container {
+    .footer-container {{
         margin-top: 40px;
         padding: 20px;
         background: rgba(15, 23, 42, 0.5);
         border-radius: 12px;
         border-top: 1px solid rgba(255, 255, 255, 0.05);
         text-align: center;
-    }
-    .footer-text {
+    }}
+    .footer-text {{
         color: #94A3B8;
         font-size: 0.82rem;
-    }
-    .footer-author {
+    }}
+    .footer-author {{
         color: #38BDF8;
         font-weight: 700;
-    }
+    }}
     </style>
 """, unsafe_allow_html=True)
 
@@ -178,7 +194,6 @@ def gerar_relatorio_pdf(total_atendimentos, media_permanencia, taxa_ocupacao, ca
 
     story = []
     
-    # Adiciona o Logótipo se fornecido
     if logo_bytes is not None:
         try:
             logo_img_buffer = io.BytesIO(logo_bytes)
@@ -318,6 +333,14 @@ def processar_arquivo(uploaded_file):
 # --- INÍCIO DA APLICAÇÃO ---
 if checar_autenticacao():
 
+    # Botão de Sair do Modo Apresentação no topo (visível mesmo quando a barra lateral é ocultada)
+    if st.session_state.get("modo_apresentacao", False):
+        col_war_btn, _ = st.columns([1, 5])
+        with col_war_btn:
+            if st.button("❌ Sair do Modo War Room"):
+                st.session_state["modo_apresentacao"] = False
+                st.rerun()
+
     logo_file = st.sidebar.file_uploader("Upload Logótipo Hospitalar (Opcional)", type=["png", "jpg", "jpeg"])
     logo_bytes = logo_file.getvalue() if logo_file is not None else None
 
@@ -337,6 +360,12 @@ if checar_autenticacao():
 
     with st.sidebar:
         st.header("⚙️ Painel de Controlo")
+
+        # Opção do Modo Apresentação / War Room
+        modo_war = st.checkbox("🖥️ Modo Apresentação / War Room", value=st.session_state["modo_apresentacao"])
+        if modo_war != st.session_state["modo_apresentacao"]:
+            st.session_state["modo_apresentacao"] = modo_war
+            st.rerun()
 
         uploaded_file = st.file_uploader(
             "Carregar Ficheiro Próprio (Excel ou CSV)", 
