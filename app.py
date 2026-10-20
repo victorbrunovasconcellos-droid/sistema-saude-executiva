@@ -5,8 +5,9 @@ import plotly.express as px
 import plotly.graph_objects as go
 import pdfplumber
 import io
+from PIL import Image
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image as RLImage
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 
@@ -123,7 +124,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 3. Gerador de Dados Demonstrativos (Compatível com o novo formato de colunas)
+# 3. Gerador de Dados Demonstrativos
 @st.cache_data
 def gerar_dados_demonstracao():
     np.random.seed(42)
@@ -144,8 +145,8 @@ def gerar_dados_demonstracao():
     }
     return pd.DataFrame(data)
 
-# 4. Gerador de PDF Executivo
-def gerar_relatorio_pdf(total_atendimentos, media_permanencia, taxa_ocupacao, casos_criticos, setor_filtro, convenio_filtro):
+# 4. Gerador de PDF Executivo com Logótipo
+def gerar_relatorio_pdf(total_atendimentos, media_permanencia, taxa_ocupacao, casos_criticos, setor_filtro, convenio_filtro, logo_bytes=None):
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=30, leftMargin=30, topMargin=30, bottomMargin=30)
     styles = getSampleStyleSheet()
@@ -154,15 +155,15 @@ def gerar_relatorio_pdf(total_atendimentos, media_permanencia, taxa_ocupacao, ca
         'TitleStyle',
         parent=styles['Heading1'],
         fontName='Helvetica-Bold',
-        fontSize=18,
+        fontSize=16,
         textColor=colors.HexColor('#0F172A'),
-        spaceAfter=6
+        spaceAfter=4
     )
     subtitle_style = ParagraphStyle(
         'SubTitleStyle',
         parent=styles['Normal'],
         fontName='Helvetica',
-        fontSize=10,
+        fontSize=9,
         textColor=colors.HexColor('#475569'),
         spaceAfter=15
     )
@@ -177,6 +178,16 @@ def gerar_relatorio_pdf(total_atendimentos, media_permanencia, taxa_ocupacao, ca
 
     story = []
     
+    # Adiciona o Logótipo se fornecido
+    if logo_bytes is not None:
+        try:
+            logo_img_buffer = io.BytesIO(logo_bytes)
+            rl_img = RLImage(logo_img_buffer, width=80, height=40)
+            story.append(rl_img)
+            story.append(Spacer(1, 10))
+        except Exception:
+            pass
+
     story.append(Paragraph("PAINEL ESTRATÉGICO DE GESTÃO HOSPITALAR (PEGH)", title_style))
     story.append(Paragraph("Relatório Sintético de Inteligência Assistencial e Governança de Dados", subtitle_style))
     story.append(Spacer(1, 10))
@@ -307,10 +318,9 @@ def processar_arquivo(uploaded_file):
 # --- INÍCIO DA APLICAÇÃO ---
 if checar_autenticacao():
 
-    # Gerenciamento de Logotipo na Barra Lateral e Exibição no Topo
     logo_file = st.sidebar.file_uploader("Upload Logótipo Hospitalar (Opcional)", type=["png", "jpg", "jpeg"])
+    logo_bytes = logo_file.getvalue() if logo_file is not None else None
 
-    # Cabeçalho Principal com Suporte a Logótipo Dinâmico
     col_logo, col_title = st.columns([1, 4])
     
     with col_logo:
@@ -444,7 +454,7 @@ if checar_autenticacao():
             st.subheader("🧠 Diagnostic Intelligence & Resumo Gerencial")
             
         with col_res2:
-            pdf_buffer = gerar_relatorio_pdf(total_atendimentos, media_permanencia, taxa_ocupacao, casos_criticos, setor_selecionado, convenio_selecionado)
+            pdf_buffer = gerar_relatorio_pdf(total_atendimentos, media_permanencia, taxa_ocupacao, casos_criticos, setor_selecionado, convenio_selecionado, logo_bytes)
             st.download_button(
                 label="📄 Exportar Relatório Executivo (PDF)",
                 data=pdf_buffer,
